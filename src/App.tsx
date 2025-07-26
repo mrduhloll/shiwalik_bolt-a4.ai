@@ -5,7 +5,13 @@ import { AuthProvider } from './contexts/AuthContext';
 import { StudentProvider } from './contexts/StudentContext';
 import { NotificationProvider } from './contexts/NotificationContext';
 import { LoadingProvider } from './contexts/LoadingContext';
+import MainLayout from './components/MainLayout';
 import Layout from './components/Layout';
+import MainHome from './pages/MainHome';
+import Teachers from './pages/Teachers';
+import Houses from './pages/Houses';
+import Academic from './pages/Academic';
+import Gallery from './pages/Gallery';
 import Home from './pages/Home';
 import StudentDetails from './pages/StudentDetails';
 import StudentProfile from './pages/StudentProfile';
@@ -27,17 +33,71 @@ const AppContent: React.FC = () => {
 
   return (
     <>
-      <Layout>
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/students" element={<StudentDetails />} />
-          <Route path="/student/:id" element={<StudentProfile />} />
-          <Route path="/academic" element={<AcademicPerformance />} />
-          <Route path="/movement" element={<MovementRegister />} />
-          <Route path="/about" element={<AboutHouse />} />
-          <Route path="/admin-block" element={<AdminBlock />} />
-        </Routes>
-      </Layout>
+      <Routes>
+        {/* Main School Website Routes */}
+        <Route path="/main" element={
+          <MainLayout>
+            <MainHome />
+          </MainLayout>
+        } />
+        <Route path="/teachers" element={
+          <MainLayout>
+            <Teachers />
+          </MainLayout>
+        } />
+        <Route path="/houses" element={
+          <MainLayout>
+            <Houses />
+          </MainLayout>
+        } />
+        <Route path="/academic-main" element={
+          <MainLayout>
+            <Academic />
+          </MainLayout>
+        } />
+        <Route path="/gallery" element={
+          <MainLayout>
+            <Gallery />
+          </MainLayout>
+        } />
+        
+        {/* Shiwalik House Routes */}
+        <Route path="/" element={
+          <Layout>
+            <Home />
+          </Layout>
+        } />
+        <Route path="/students" element={
+          <Layout>
+            <StudentDetails />
+          </Layout>
+        } />
+        <Route path="/student/:id" element={
+          <Layout>
+            <StudentProfile />
+          </Layout>
+        } />
+        <Route path="/academic" element={
+          <Layout>
+            <AcademicPerformance />
+          </Layout>
+        } />
+        <Route path="/movement" element={
+          <Layout>
+            <MovementRegister />
+          </Layout>
+        } />
+        <Route path="/about" element={
+          <Layout>
+            <AboutHouse />
+          </Layout>
+        } />
+        <Route path="/admin-block" element={
+          <Layout>
+            <AdminBlock />
+          </Layout>
+        } />
+      </Routes>
       <LoginModal />
       <DonateButton />
     </>
