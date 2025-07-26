@@ -53,11 +53,11 @@ const AcademicPerformance: React.FC = () => {
 
   const overallStats = {
     totalStudents: students.length,
-    averagePercentage: Math.round((classData.reduce((sum, data) => 
-      sum + (data.averagePercentage * data.totalStudents), 0) / students.length) * 10) / 10,
+    averagePercentage: students.length > 0 ? Math.round((classData.reduce((sum, data) => 
+      sum + (data.averagePercentage * data.totalStudents), 0) / students.length) * 10) / 10 : 0,
     topAchievers: students.reduce((sum, student) => sum + student.achievements.length, 0),
-    excellenceRate: Math.round((students.filter(s => 
-      s.academicRecords.length > 0 && s.academicRecords[0].percentage >= 90).length / students.length) * 100)
+    excellenceRate: students.length > 0 ? Math.round((students.filter(s => 
+      s.academicRecords.length > 0 && s.academicRecords[0].percentage >= 90).length / students.length) * 100) : 0
   };
 
   return (
@@ -270,6 +270,15 @@ const AcademicPerformance: React.FC = () => {
           </div>
         </div>
       </div>
+      
+      {/* Footer */}
+      <footer className="mt-16 py-8 border-t border-white/10">
+        <div className="max-w-7xl mx-auto px-4 text-center">
+          <div className="text-center text-gray-400 text-sm opacity-70">
+            Guided by Sunil Rathod (TGT CS)
+          </div>
+        </div>
+      </footer>
     </div>
   );
 };

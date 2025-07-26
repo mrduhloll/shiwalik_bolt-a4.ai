@@ -180,6 +180,20 @@ const MovementRegister: React.FC = () => {
                     </div>
                   </div>
 
+                  {/* Photo Display */}
+                  {request.photoUrl && (
+                    <div className="mb-4">
+                      <h4 className="text-white font-semibold mb-2">Photo with Parent/Guardian:</h4>
+                      <div className="w-48 h-36 rounded-xl overflow-hidden border-2 border-white/20">
+                        <img
+                          src={request.photoUrl}
+                          alt="Student with parent/guardian"
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                    </div>
+                  )}
+
                   <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
                     <div className="bg-white/5 rounded-xl p-4">
                       <p className="text-gray-400 text-sm mb-1">Exit Date</p>
@@ -253,6 +267,15 @@ const MovementRegister: React.FC = () => {
           onClose={() => setIsApplicationModalOpen(false)}
         />
       </div>
+      
+      {/* Footer */}
+      <footer className="mt-16 py-8 border-t border-white/10">
+        <div className="max-w-6xl mx-auto px-4 text-center">
+          <div className="text-center text-gray-400 text-sm opacity-70">
+            Guided by Sunil Rathod (TGT CS)
+          </div>
+        </div>
+      </footer>
     </div>
   );
 };

@@ -224,6 +224,15 @@ const AdminBlock: React.FC = () => {
           </ul>
         </div>
       </div>
+      
+      {/* Footer */}
+      <footer className="mt-16 py-8 border-t border-gray-200 dark:border-red-800/30">
+        <div className="max-w-4xl mx-auto px-4 text-center">
+          <div className="text-center text-gray-400 dark:text-gray-500 text-sm opacity-70">
+            Guided by Sunil Rathod (TGT CS)
+          </div>
+        </div>
+      </footer>
     </div>
   );
 };

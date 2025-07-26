@@ -14,7 +14,7 @@ export const LoadingProvider: React.FC<{ children: React.ReactNode }> = ({ child
     // Simulate initial loading
     const timer = setTimeout(() => {
       setIsLoading(false);
-    }, 2000);
+    }, 3000);
 
     // Listen for navigation changes
     const handleBeforeUnload = () => setIsLoading(true);
@@ -31,15 +31,25 @@ export const LoadingProvider: React.FC<{ children: React.ReactNode }> = ({ child
     const connection = (navigator as any).connection;
     if (connection) {
       const handleConnectionChange = () => {
-        if (connection.effectiveType === 'slow-2g' || connection.effectiveType === '2g') {
+        if (connection.effectiveType === 'slow-2g' || connection.effectiveType === '2g' || connection.effectiveType === '3g') {
           setIsLoading(true);
-          setTimeout(() => setIsLoading(false), 3000);
+          setTimeout(() => setIsLoading(false), 4000);
         }
       };
       
       connection.addEventListener('change', handleConnectionChange);
       return () => connection.removeEventListener('change', handleConnectionChange);
     }
+    
+    // Also check for slow loading times
+    const slowLoadingTimer = setTimeout(() => {
+      if (document.readyState !== 'complete') {
+        setIsLoading(true);
+        setTimeout(() => setIsLoading(false), 3000);
+      }
+    }, 5000);
+    
+    return () => clearTimeout(slowLoadingTimer);
   }, []);
 
   return (
