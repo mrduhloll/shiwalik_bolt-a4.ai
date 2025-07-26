@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { ChevronDown, Sparkles, Users, Award, TrendingUp } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import { useStudents } from '../contexts/StudentContext';
 import EditableContent from '../components/ui/EditableContent';
 
 const Home: React.FC = () => {

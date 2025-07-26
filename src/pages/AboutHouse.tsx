@@ -1,29 +1,32 @@
 import React from 'react';
 import { Mail, Phone, Award, Users, Calendar, MapPin, Star, BookOpen } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
+import { useStudents } from '../contexts/StudentContext';
 import EditableContent from '../components/ui/EditableContent';
 import EditableImage from '../components/ui/EditableImage';
 
 const AboutHouse: React.FC = () => {
   const { isEditorMode } = useAuth();
+  const { students } = useStudents();
   const [pageContent, setPageContent] = React.useState({
     title: 'About Shiwalik House',
     subtitle: 'A home away from home where excellence meets character'
   });
 
-  const houseMaster = {
+  const [houseMaster, setHouseMaster] = React.useState({
     name: 'Dr. Rajesh Kumar',
     designation: 'House Master, Shiwalik House',
-    qualifications: ['M.A. English Literature', 'Ph.D. Educational Psychology', 'B.Ed.'],
+    qualifications: 'M.A. English Literature, Ph.D. Educational Psychology, B.Ed.',
     experience: '15 years',
     contact: '+91 9876543100',
     email: 'rajesh.kumar@school.edu.in',
     photo: 'https://images.pexels.com/photos/1222271/pexels-photo-1222271.jpeg?auto=compress&cs=tinysrgb&w=400',
     message: 'Welcome to Shiwalik House, where we nurture young minds to become responsible global citizens. Our focus is on holistic development that encompasses academic excellence, character building, and leadership skills.'
-  };
+  });
 
-  const staff = [
+  const [staff, setStaff] = React.useState([
     {
+      id: '1',
       name: 'Ms. Priya Sharma',
       designation: 'Assistant House Master',
       contact: '+91 9876543101',
@@ -31,6 +34,7 @@ const AboutHouse: React.FC = () => {
       photo: 'https://images.pexels.com/photos/1181681/pexels-photo-1181681.jpeg?auto=compress&cs=tinysrgb&w=300'
     },
     {
+      id: '2',
       name: 'Mr. Amit Singh',
       designation: 'House Warden',
       contact: '+91 9876543102',
@@ -38,24 +42,25 @@ const AboutHouse: React.FC = () => {
       photo: 'https://images.pexels.com/photos/1043474/pexels-photo-1043474.jpeg?auto=compress&cs=tinysrgb&w=300'
     },
     {
+      id: '3',
       name: 'Ms. Neha Gupta',
       designation: 'House Tutor',
       contact: '+91 9876543103',
       email: 'neha.gupta@school.edu.in',
       photo: 'https://images.pexels.com/photos/1181686/pexels-photo-1181686.jpeg?auto=compress&cs=tinysrgb&w=300'
     }
-  ];
+  ]);
 
-  const achievements = [
+  const [achievements, setAchievements] = React.useState([
     'Inter-House Academic Competition - 1st Place (2023)',
     'Best House for Cultural Activities - 2nd Place (2023)',
     'Sports Championship - Overall Winners (2023)',
     'Community Service Initiative - Excellence Award (2023)',
     'Cleanliness and Discipline - Best House Award (2023)',
     'Literary Competition - 1st Place (2023)'
-  ];
+  ]);
 
-  const facilities = [
+  const [facilities, setFacilities] = React.useState([
     'Modern dormitories with attached bathrooms',
     'Dedicated study halls with Wi-Fi connectivity',
     'Recreation room with indoor games',
@@ -64,7 +69,7 @@ const AboutHouse: React.FC = () => {
     'Secure and monitored environment',
     'Nutritious dining facilities',
     'Gymnasium access for physical fitness'
-  ];
+  ]);
 
   const houseValues = [
     {
@@ -88,6 +93,32 @@ const AboutHouse: React.FC = () => {
       icon: BookOpen
     }
   ];
+
+  const updateHouseMaster = (field: string, value: string) => {
+    setHouseMaster(prev => ({ ...prev, [field]: value }));
+  };
+
+  const updateStaffMember = (id: string, field: string, value: string) => {
+    setStaff(prev => prev.map(member => 
+      member.id === id ? { ...member, [field]: value } : member
+    ));
+  };
+
+  const updateAchievement = (index: number, value: string) => {
+    setAchievements(prev => prev.map((achievement, i) => 
+      i === index ? value : achievement
+    ));
+  };
+
+  const updateFacility = (index: number, value: string) => {
+    setFacilities(prev => prev.map((facility, i) => 
+      i === index ? value : facility
+    ));
+  };
+
+  // Calculate real statistics from students data
+  const totalStudents = students.length;
+  const totalAchievements = students.reduce((sum, student) => sum + student.achievements.length, 0);
 
   return (
     <div className="min-h-screen py-8 px-4 bg-gray-50 dark:bg-transparent">
@@ -131,38 +162,37 @@ const AboutHouse: React.FC = () => {
                   <h3 className="text-2xl font-bold text-white mb-2">
                     <EditableContent
                       content={houseMaster.name}
-                      onSave={(value) => {
-                        // In a real app, this would update the houseMaster data
-                        console.log('Update house master name:', value);
-                      }}
+                      onSave={(value) => updateHouseMaster('name', value)}
                     />
                   </h3>
                   <p className="text-purple-300 font-semibold mb-4">
                     <EditableContent
                       content={houseMaster.designation}
-                      onSave={(value) => {
-                        // In a real app, this would update the houseMaster data
-                        console.log('Update house master designation:', value);
-                      }}
+                      onSave={(value) => updateHouseMaster('designation', value)}
                     />
                   </p>
                   
                   <div className="space-y-3">
                     <div className="flex items-center justify-center text-gray-300">
                       <Calendar className="h-5 w-5 mr-3 text-blue-400" />
-                      <span>{houseMaster.experience} of experience</span>
+                      <EditableContent
+                        content={`${houseMaster.experience} of experience`}
+                        onSave={(value) => updateHouseMaster('experience', value.replace(' of experience', ''))}
+                      />
                     </div>
                     <div className="flex items-center justify-center text-gray-300">
                       <Phone className="h-5 w-5 mr-3 text-green-400" />
-                      <a href={`tel:${houseMaster.contact}`} className="hover:text-white transition-colors">
-                        {houseMaster.contact}
-                      </a>
+                      <EditableContent
+                        content={houseMaster.contact}
+                        onSave={(value) => updateHouseMaster('contact', value)}
+                      />
                     </div>
                     <div className="flex items-center justify-center text-gray-300">
                       <Mail className="h-5 w-5 mr-3 text-purple-400" />
-                      <a href={`mailto:${houseMaster.email}`} className="hover:text-white transition-colors">
-                        {houseMaster.email}
-                      </a>
+                      <EditableContent
+                        content={houseMaster.email}
+                        onSave={(value) => updateHouseMaster('email', value)}
+                      />
                     </div>
                   </div>
                 </div>
@@ -172,22 +202,26 @@ const AboutHouse: React.FC = () => {
                 <div className="space-y-6">
                   <div>
                     <h4 className="text-xl font-bold text-white mb-4">Qualifications</h4>
-                    <div className="grid grid-cols-1 gap-3">
-                      {houseMaster.qualifications.map((qual, index) => (
-                        <div key={index} className="flex items-center p-3 bg-white/5 rounded-xl border border-white/10">
-                          <Award className="h-5 w-5 text-yellow-400 mr-3" />
-                          <span className="text-gray-300">{qual}</span>
-                        </div>
-                      ))}
+                    <div className="flex items-center p-3 bg-white/5 rounded-xl border border-white/10">
+                      <Award className="h-5 w-5 text-yellow-400 mr-3" />
+                      <EditableContent
+                        content={houseMaster.qualifications}
+                        onSave={(value) => updateHouseMaster('qualifications', value)}
+                        className="text-gray-300"
+                        multiline
+                      />
                     </div>
                   </div>
 
                   <div>
                     <h4 className="text-xl font-bold text-white mb-4">Message from House Master</h4>
                     <div className="p-6 bg-gradient-to-br from-purple-900/30 to-pink-900/30 rounded-xl border border-purple-500/30">
-                      <p className="text-gray-300 leading-relaxed italic text-lg">
-                        "{houseMaster.message}"
-                      </p>
+                      <EditableContent
+                        content={`"${houseMaster.message}"`}
+                        onSave={(value) => updateHouseMaster('message', value.replace(/^"|"$/g, ''))}
+                        className="text-gray-300 leading-relaxed italic text-lg"
+                        multiline
+                      />
                     </div>
                   </div>
                 </div>
@@ -222,13 +256,13 @@ const AboutHouse: React.FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-12">
           <div className="bg-gradient-to-br from-blue-900/50 to-blue-800/50 backdrop-blur-sm rounded-2xl p-6 border border-blue-500/30 text-center">
             <Users className="h-8 w-8 text-blue-400 mx-auto mb-4" />
-            <h3 className="text-3xl font-bold text-white mb-1">156</h3>
+            <h3 className="text-3xl font-bold text-white mb-1">{totalStudents}</h3>
             <p className="text-blue-300">Total Students</p>
           </div>
 
           <div className="bg-gradient-to-br from-purple-900/50 to-purple-800/50 backdrop-blur-sm rounded-2xl p-6 border border-purple-500/30 text-center">
             <Award className="h-8 w-8 text-purple-400 mx-auto mb-4" />
-            <h3 className="text-3xl font-bold text-white mb-1">47</h3>
+            <h3 className="text-3xl font-bold text-white mb-1">{totalAchievements}</h3>
             <p className="text-purple-300">Achievements</p>
           </div>
 
@@ -267,21 +301,31 @@ const AboutHouse: React.FC = () => {
                     />
                   </div>
                   
-                  <h4 className="text-xl font-bold text-white mb-1">{member.name}</h4>
-                  <p className="text-purple-300 text-sm mb-4">{member.designation}</p>
+                  <EditableContent
+                    content={member.name}
+                    onSave={(value) => updateStaffMember(member.id, 'name', value)}
+                    className="text-xl font-bold text-white mb-1"
+                  />
+                  <EditableContent
+                    content={member.designation}
+                    onSave={(value) => updateStaffMember(member.id, 'designation', value)}
+                    className="text-purple-300 text-sm mb-4"
+                  />
                   
                   <div className="space-y-2">
                     <div className="flex items-center justify-center text-gray-300 text-sm">
                       <Phone className="h-4 w-4 mr-2" />
-                      <a href={`tel:${member.contact}`} className="hover:text-white transition-colors">
-                        {member.contact}
-                      </a>
+                      <EditableContent
+                        content={member.contact}
+                        onSave={(value) => updateStaffMember(member.id, 'contact', value)}
+                      />
                     </div>
                     <div className="flex items-center justify-center text-gray-300 text-sm">
                       <Mail className="h-4 w-4 mr-2" />
-                      <a href={`mailto:${member.email}`} className="hover:text-white transition-colors">
-                        {member.email}
-                      </a>
+                      <EditableContent
+                        content={member.email}
+                        onSave={(value) => updateStaffMember(member.id, 'email', value)}
+                      />
                     </div>
                   </div>
                 </div>
@@ -305,7 +349,11 @@ const AboutHouse: React.FC = () => {
                   className="flex items-start p-3 bg-white/5 rounded-xl border border-white/10 hover:border-yellow-400/30 transition-all duration-300"
                 >
                   <Star className="h-5 w-5 text-yellow-400 mr-3 mt-1 flex-shrink-0" />
-                  <span className="text-gray-300">{achievement}</span>
+                  <EditableContent
+                    content={achievement}
+                    onSave={(value) => updateAchievement(index, value)}
+                    className="text-gray-300"
+                  />
                 </div>
               ))}
             </div>
@@ -324,13 +372,45 @@ const AboutHouse: React.FC = () => {
                   className="flex items-start p-3 bg-white/5 rounded-xl border border-white/10 hover:border-green-400/30 transition-all duration-300"
                 >
                   <div className="w-2 h-2 bg-green-400 rounded-full mr-3 mt-3 flex-shrink-0"></div>
-                  <span className="text-gray-300">{facility}</span>
+                  <EditableContent
+                    content={facility}
+                    onSave={(value) => updateFacility(index, value)}
+                    className="text-gray-300"
+                  />
                 </div>
               ))}
             </div>
           </div>
         </div>
       </div>
+      
+      {/* Footer */}
+      <footer className="mt-16 py-8 border-t border-white/10">
+        <div className="max-w-6xl mx-auto px-4 text-center">
+          <h3 className="text-xl font-bold text-white mb-4">Development Team</h3>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+            <div className="text-gray-300">
+              <p className="font-semibold">Frontend Development</p>
+              <p className="text-sm">Student Team</p>
+            </div>
+            <div className="text-gray-300">
+              <p className="font-semibold">UI/UX Design</p>
+              <p className="text-sm">Design Team</p>
+            </div>
+            <div className="text-gray-300">
+              <p className="font-semibold">Backend Systems</p>
+              <p className="text-sm">Tech Team</p>
+            </div>
+            <div className="text-gray-300">
+              <p className="font-semibold">Content Management</p>
+              <p className="text-sm">Content Team</p>
+            </div>
+          </div>
+          <div className="text-center text-gray-400 text-sm opacity-70">
+            Guided by Sunil Rathod (TGT CS)
+          </div>
+        </div>
+      </footer>
     </div>
   );
 };

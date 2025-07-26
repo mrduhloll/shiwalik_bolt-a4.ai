@@ -184,7 +184,18 @@ const StudentProfile: React.FC = () => {
                         key={index}
                         className="px-3 py-1 bg-red-100 dark:bg-red-800/30 text-red-800 dark:text-red-300 rounded-full text-sm"
                       >
-                        {hobby}
+                        {isEditorMode ? (
+                          <EditableContent
+                            content={hobby}
+                            onSave={(value) => {
+                              const newHobbies = [...student.hobbies];
+                              newHobbies[index] = value;
+                              handleUpdateArrayField('hobbies', newHobbies);
+                            }}
+                          />
+                        ) : (
+                          hobby
+                        )}
                       </span>
                     ))}
                   </div>
@@ -197,7 +208,15 @@ const StudentProfile: React.FC = () => {
                     {student.achievements.map((achievement, index) => (
                       <div key={index} className="flex items-start">
                         <Award className="h-4 w-4 text-yellow-500 mr-2 mt-1 flex-shrink-0" />
-                        <span className="text-gray-700 dark:text-gray-300 text-sm">{achievement}</span>
+                        <EditableContent
+                          content={achievement}
+                          onSave={(value) => {
+                            const newAchievements = [...student.achievements];
+                            newAchievements[index] = value;
+                            handleUpdateArrayField('achievements', newAchievements);
+                          }}
+                          className="text-gray-700 dark:text-gray-300 text-sm"
+                        />
                       </div>
                     ))}
                   </div>
@@ -323,7 +342,40 @@ const StudentProfile: React.FC = () => {
                     <div key={subIndex} className="bg-gray-50 dark:bg-red-900/20 rounded-xl p-4">
                       <h5 className="font-semibold text-gray-900 dark:text-white mb-2">{subject.name}</h5>
                       <div className="flex items-center justify-between">
-                        <span className="text-2xl font-bold text-red-600">{subject.marks}</span>
+                        <EditableContent
+                          content={subject.marks.toString()}
+                          onSave={(value) => {
+                            const newRecords = [...student.academicRecords];
+                            newRecords[index].subjects[subIndex].marks = parseInt(value);
+                            // Recalculate grade based on marks
+                            const marks = parseInt(value);
+                            let grade = 'F';
+                            if (marks >= 90) grade = 'A+';
+                            else if (marks >= 80) grade = 'A';
+                            else if (marks >= 70) grade = 'B+';
+                            else if (marks >= 60) grade = 'B';
+                            else if (marks >= 50) grade = 'C';
+                            else if (marks >= 40) grade = 'D';
+                            newRecords[index].subjects[subIndex].grade = grade;
+                            
+                            // Recalculate percentage
+                            const totalMarks = newRecords[index].subjects.reduce((sum, s) => sum + s.marks, 0);
+                            const percentage = totalMarks / newRecords[index].subjects.length;
+                            newRecords[index].percentage = Math.round(percentage * 10) / 10;
+                            
+                            // Recalculate overall grade
+                            if (percentage >= 90) newRecords[index].grade = 'A+';
+                            else if (percentage >= 80) newRecords[index].grade = 'A';
+                            else if (percentage >= 70) newRecords[index].grade = 'B+';
+                            else if (percentage >= 60) newRecords[index].grade = 'B';
+                            else if (percentage >= 50) newRecords[index].grade = 'C';
+                            else if (percentage >= 40) newRecords[index].grade = 'D';
+                            else newRecords[index].grade = 'F';
+                            
+                            updateStudent(student.id, { academicRecords: newRecords });
+                          }}
+                          className="text-2xl font-bold text-red-600"
+                        />
                         <span className="px-2 py-1 bg-red-100 dark:bg-red-800/30 text-red-800 dark:text-red-300 rounded text-sm font-semibold">
                           {subject.grade}
                         </span>
@@ -336,6 +388,15 @@ const StudentProfile: React.FC = () => {
           </div>
         )}
       </div>
+      
+      {/* Footer */}
+      <footer className="mt-16 py-8 border-t border-gray-200 dark:border-red-800/30">
+        <div className="max-w-6xl mx-auto px-4 text-center">
+          <div className="text-center text-gray-400 dark:text-gray-500 text-sm opacity-70">
+            Guided by Sunil Rathod (TGT CS)
+          </div>
+        </div>
+      </footer>
     </div>
   );
 };
