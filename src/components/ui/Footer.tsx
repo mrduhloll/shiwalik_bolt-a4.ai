@@ -7,6 +7,7 @@ const Footer: React.FC = () => {
         <div className="text-center mb-6">
           <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4">Development Team</h3>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+            <div className="text-gray-600 dark:text-gray-300">
               <p className="text-white font-bold text-lg">Frontend Development</p>
               <p className="text-sm md:text-base text-white">Abhishek A</p>
               <p className="text-xs text-white">12th Computer Science</p>
@@ -16,12 +17,13 @@ const Footer: React.FC = () => {
               <p className="text-sm">Design Team</p>
             </div>
             <div className="text-gray-600 dark:text-gray-300">
-              <p className="font-semibold">Backend Systems</p>
-              <p className="text-sm">Tech Team</p>
+              <p className="text-white font-bold text-lg">Backend Development</p>
+              <p className="text-sm md:text-base text-white">Yashas V M</p>
+              <p className="text-xs text-white">12th Computer Science</p>
             </div>
             <div className="text-gray-600 dark:text-gray-300">
-              <p className="font-semibold">Content Management</p>
-              <p className="text-sm">Content Team</p>
+              <p className="text-white font-bold text-lg">Frontend Development</p>
+              <p className="text-sm md:text-base text-white">IT Department</p>
             </div>
           </div>
         </div>
