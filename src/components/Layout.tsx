@@ -4,6 +4,7 @@ import { Menu, X, Sun, Moon, Bell, User, Home, Users, Award, TrendingUp, BookOpe
 import { useTheme } from '../contexts/ThemeContext';
 import { useAuth } from '../contexts/AuthContext';
 import { useNotifications } from '../contexts/NotificationContext';
+import { useAdminControl } from '../contexts/AdminControlContext';
 import AccountDropdown from './ui/AccountDropdown';
 import NotificationDropdown from './ui/NotificationDropdown';
 
@@ -16,15 +17,16 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   const { theme, toggleTheme } = useTheme();
   const { isAuthenticated, isEditorMode } = useAuth();
   const { pendingCount } = useNotifications();
+  const { sectionVisibility } = useAdminControl();
   const location = useLocation();
 
   const navigation = [
     { name: 'Home', href: '/', icon: Home },
-    { name: 'Students', href: '/students', icon: Users },
-    { name: 'Academic', href: '/academic', icon: Award },
-    { name: 'Movement', href: '/movement', icon: TrendingUp },
-    { name: 'About House', href: '/about', icon: BookOpen },
-  ];
+    ...(sectionVisibility.students ? [{ name: 'Students', href: '/students', icon: Users }] : []),
+    ...(sectionVisibility.academic ? [{ name: 'Academic', href: '/academic', icon: Award }] : []),
+    ...(sectionVisibility.movement ? [{ name: 'Movement', href: '/movement', icon: TrendingUp }] : []),
+    ...(sectionVisibility.about ? [{ name: 'About House', href: '/about', icon: BookOpen }] : []),
+  ].filter(Boolean);
 
   const adminNavigation = [
     { name: 'Admin Block', href: '/admin-block', icon: Shield },

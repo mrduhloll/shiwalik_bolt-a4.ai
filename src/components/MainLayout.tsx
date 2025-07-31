@@ -4,6 +4,7 @@ import { Menu, X, Sun, Moon, Bell, User, Home, Users, BookOpen, Camera, Graduati
 import { useTheme } from '../contexts/ThemeContext';
 import { useAuth } from '../contexts/AuthContext';
 import { useNotifications } from '../contexts/NotificationContext';
+import { useAdminControl } from '../contexts/AdminControlContext';
 import AccountDropdown from './ui/AccountDropdown';
 import NotificationDropdown from './ui/NotificationDropdown';
 
@@ -16,15 +17,16 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
   const { theme, toggleTheme } = useTheme();
   const { isAuthenticated, isEditorMode } = useAuth();
   const { pendingCount } = useNotifications();
+  const { sectionVisibility } = useAdminControl();
   const location = useLocation();
 
   const navigation = [
     { name: 'Home', href: '/main', icon: Home },
-    { name: 'Teachers', href: '/teachers', icon: Users },
-    { name: 'Houses', href: '/houses', icon: GraduationCap },
-    { name: 'Academic', href: '/academic-main', icon: BookOpen },
-    { name: 'Gallery', href: '/gallery', icon: Camera },
-  ];
+    ...(sectionVisibility.teachers ? [{ name: 'Teachers', href: '/teachers', icon: Users }] : []),
+    ...(sectionVisibility.houses ? [{ name: 'Houses', href: '/houses', icon: GraduationCap }] : []),
+    ...(sectionVisibility.academic ? [{ name: 'Academic', href: '/academic-main', icon: BookOpen }] : []),
+    ...(sectionVisibility.gallery ? [{ name: 'Gallery', href: '/gallery', icon: Camera }] : []),
+  ].filter(Boolean);
 
   const isActive = (path: string) => location.pathname === path;
 

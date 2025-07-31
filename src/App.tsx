@@ -6,6 +6,7 @@ import { StudentProvider } from './contexts/StudentContext';
 import { NotificationProvider } from './contexts/NotificationContext';
 import { LoadingProvider } from './contexts/LoadingContext';
 import { DataProvider } from './contexts/DataContext';
+import { AdminControlProvider } from './contexts/AdminControlContext';
 import MainLayout from './components/MainLayout';
 import Layout from './components/Layout';
 import MainHome from './pages/MainHome';
@@ -109,19 +110,21 @@ function App() {
   return (
     <ThemeProvider>
       <DataProvider>
-        <NotificationProvider>
-          <AuthProvider>
-            <StudentProvider>
-              <LoadingProvider>
-                <Router>
-                  <div className="min-h-screen transition-all duration-300">
-                    <AppContent />
-                  </div>
-                </Router>
-              </LoadingProvider>
-            </StudentProvider>
-          </AuthProvider>
-        </NotificationProvider>
+        <AdminControlProvider>
+          <NotificationProvider>
+            <AuthProvider>
+              <StudentProvider>
+                <LoadingProvider>
+                  <Router>
+                    <div className="min-h-screen transition-all duration-300">
+                      <AppContent />
+                    </div>
+                  </Router>
+                </LoadingProvider>
+              </StudentProvider>
+            </AuthProvider>
+          </NotificationProvider>
+        </AdminControlProvider>
       </DataProvider>
     </ThemeProvider>
   );
