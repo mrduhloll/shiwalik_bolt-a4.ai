@@ -13,13 +13,13 @@ const Footer: React.FC = () => {
               <p className="text-xs text-white">12th Computer Science</p>
             </div>
             <div className="text-gray-600 dark:text-gray-300">
-              <p className="font-semibold">UI/UX Design</p>
-              <p className="text-sm">Design Team</p>
-            </div>
-            <div className="text-gray-600 dark:text-gray-300">
               <p className="text-white font-bold text-lg">Backend Development</p>
               <p className="text-sm md:text-base text-white">Yashas V M</p>
               <p className="text-xs text-white">12th Computer Science</p>
+            </div>
+            <div className="text-gray-600 dark:text-gray-300">
+              <p className="text-white font-bold text-lg">Data Entry</p>
+              <p className="text-sm md:text-base text-white">IT Department</p>
             </div>
             <div className="text-gray-600 dark:text-gray-300">
               <p className="text-white font-bold text-lg">Data Entry</p>
