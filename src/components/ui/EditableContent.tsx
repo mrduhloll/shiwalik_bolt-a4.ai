@@ -1,26 +1,33 @@
 import React, { useState } from 'react';
 import { Edit3, Check, X } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
+import { useData } from '../../contexts/DataContext';
 
 interface EditableContentProps {
   content: string;
   onSave: (newContent: string) => void;
   className?: string;
   multiline?: boolean;
+  dataKey?: string;
 }
 
 const EditableContent: React.FC<EditableContentProps> = ({
   content,
   onSave,
   className = '',
-  multiline = false
+  multiline = false,
+  dataKey
 }) => {
   const { isEditorMode } = useAuth();
+  const { saveData } = useData();
   const [isEditing, setIsEditing] = useState(false);
   const [editValue, setEditValue] = useState(content);
 
   const handleSave = () => {
     onSave(editValue);
+    if (dataKey) {
+      saveData(dataKey, editValue);
+    }
     setIsEditing(false);
   };
 

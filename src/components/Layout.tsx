@@ -119,9 +119,9 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
               <NotificationDropdown>
                 <button className="relative p-2 rounded-xl bg-gray-100 dark:bg-red-800/50 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-red-700/50 transition-all duration-200">
                   <Bell className="h-5 w-5" />
-                  {pendingCount > 0 && (
+                  {(isAuthenticated ? pendingCount : 5) > 0 && (
                     <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-semibold">
-                      {pendingCount}
+                      {isAuthenticated ? pendingCount : 5}
                     </span>
                   )}
                 </button>

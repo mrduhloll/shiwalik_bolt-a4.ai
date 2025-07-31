@@ -1,16 +1,20 @@
 import React, { useState } from 'react';
-import { Shield, UserPlus, Trash2, Eye, EyeOff, AlertTriangle } from 'lucide-react';
+import { Shield, UserPlus, Trash2, Eye, EyeOff, AlertTriangle, BarChart3, Users, Activity, Database, Settings, TrendingUp } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { useNotifications } from '../contexts/NotificationContext';
+import { useStudents } from '../contexts/StudentContext';
+import Footer from '../components/ui/Footer';
 
 const AdminBlock: React.FC = () => {
   const { adminUsers, addAdminUser, removeAdminUser, user } = useAuth();
   const { addNotification } = useNotifications();
+  const { students } = useStudents();
   
   const [newUsername, setNewUsername] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [activeTab, setActiveTab] = useState<'dashboard' | 'users'>('dashboard');
 
   const handleAddAdmin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -58,9 +62,18 @@ const AdminBlock: React.FC = () => {
     }
   };
 
+  // Calculate dashboard stats
+  const totalStudents = students.length;
+  const studentsWithRecords = students.filter(s => s.academicRecords.length > 0);
+  const averagePerformance = studentsWithRecords.length > 0 
+    ? Math.round(studentsWithRecords.reduce((sum, student) => sum + student.academicRecords[0].percentage, 0) / studentsWithRecords.length)
+    : 0;
+  const totalAchievements = students.reduce((sum, student) => sum + student.achievements.length, 0);
+  const dataSize = Math.round((JSON.stringify(students).length / 1024) * 100) / 100; // KB
+
   return (
     <div className="min-h-screen py-8 px-4 bg-gray-50 dark:bg-gradient-to-br dark:from-red-950 dark:via-red-900 dark:to-black">
-      <div className="max-w-4xl mx-auto">
+      <div className="max-w-6xl mx-auto">
         {/* Header */}
         <div className="text-center mb-12">
           <div className="flex items-center justify-center mb-4">
@@ -92,7 +105,143 @@ const AdminBlock: React.FC = () => {
           </div>
         </div>
 
-        <div className="grid lg:grid-cols-2 gap-8">
+        {/* Tab Navigation */}
+        <div className="flex space-x-1 bg-white/10 backdrop-blur-sm rounded-xl p-1 mb-8 w-fit mx-auto">
+          <button
+            onClick={() => setActiveTab('dashboard')}
+            className={`px-6 py-3 rounded-lg font-semibold transition-all duration-200 ${
+              activeTab === 'dashboard'
+                ? 'bg-white text-gray-900'
+                : 'text-gray-300 hover:text-white hover:bg-white/10'
+            }`}
+          >
+            <BarChart3 className="h-4 w-4 mr-2 inline" />
+            Dashboard
+          </button>
+          <button
+            onClick={() => setActiveTab('users')}
+            className={`px-6 py-3 rounded-lg font-semibold transition-all duration-200 ${
+              activeTab === 'users'
+                ? 'bg-white text-gray-900'
+                : 'text-gray-300 hover:text-white hover:bg-white/10'
+            }`}
+          >
+            <UserPlus className="h-4 w-4 mr-2 inline" />
+            User Management
+          </button>
+        </div>
+
+        {activeTab === 'dashboard' ? (
+          /* Admin Dashboard */
+          <div className="space-y-8">
+            {/* Dashboard Stats */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              <div className="bg-gradient-to-br from-blue-900/50 to-blue-800/50 backdrop-blur-sm rounded-2xl p-6 border border-blue-500/30">
+                <div className="flex items-center justify-between mb-4">
+                  <Users className="h-8 w-8 text-blue-400" />
+                  <span className="text-blue-300 text-sm font-medium">Total</span>
+                </div>
+                <h3 className="text-3xl font-bold text-white mb-1">{totalStudents}</h3>
+                <p className="text-blue-300">Students</p>
+              </div>
+
+              <div className="bg-gradient-to-br from-green-900/50 to-green-800/50 backdrop-blur-sm rounded-2xl p-6 border border-green-500/30">
+                <div className="flex items-center justify-between mb-4">
+                  <TrendingUp className="h-8 w-8 text-green-400" />
+                  <span className="text-green-300 text-sm font-medium">Average</span>
+                </div>
+                <h3 className="text-3xl font-bold text-white mb-1">{averagePerformance}%</h3>
+                <p className="text-green-300">Performance</p>
+              </div>
+
+              <div className="bg-gradient-to-br from-purple-900/50 to-purple-800/50 backdrop-blur-sm rounded-2xl p-6 border border-purple-500/30">
+                <div className="flex items-center justify-between mb-4">
+                  <Shield className="h-8 w-8 text-purple-400" />
+                  <span className="text-purple-300 text-sm font-medium">Total</span>
+                </div>
+                <h3 className="text-3xl font-bold text-white mb-1">{totalAchievements}</h3>
+                <p className="text-purple-300">Achievements</p>
+              </div>
+
+              <div className="bg-gradient-to-br from-orange-900/50 to-orange-800/50 backdrop-blur-sm rounded-2xl p-6 border border-orange-500/30">
+                <div className="flex items-center justify-between mb-4">
+                  <Database className="h-8 w-8 text-orange-400" />
+                  <span className="text-orange-300 text-sm font-medium">Data Size</span>
+                </div>
+                <h3 className="text-3xl font-bold text-white mb-1">{dataSize}</h3>
+                <p className="text-orange-300">KB</p>
+              </div>
+            </div>
+
+            {/* System Health */}
+            <div className="bg-white dark:bg-red-950/50 backdrop-blur-sm rounded-2xl border border-gray-200 dark:border-red-800/30 p-6">
+              <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-6 flex items-center">
+                <Activity className="h-6 w-6 mr-3 text-green-500" />
+                System Health
+              </h3>
+              
+              <div className="grid md:grid-cols-2 gap-6">
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between p-4 bg-green-50 dark:bg-green-900/20 rounded-xl border border-green-200 dark:border-green-700/50">
+                    <span className="text-gray-700 dark:text-gray-300">Data Storage</span>
+                    <span className="text-green-600 dark:text-green-400 font-semibold">Healthy</span>
+                  </div>
+                  
+                  <div className="flex items-center justify-between p-4 bg-green-50 dark:bg-green-900/20 rounded-xl border border-green-200 dark:border-green-700/50">
+                    <span className="text-gray-700 dark:text-gray-300">User Authentication</span>
+                    <span className="text-green-600 dark:text-green-400 font-semibold">Active</span>
+                  </div>
+                  
+                  <div className="flex items-center justify-between p-4 bg-green-50 dark:bg-green-900/20 rounded-xl border border-green-200 dark:border-green-700/50">
+                    <span className="text-gray-700 dark:text-gray-300">Theme System</span>
+                    <span className="text-green-600 dark:text-green-400 font-semibold">Operational</span>
+                  </div>
+                </div>
+                
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between p-4 bg-blue-50 dark:bg-blue-900/20 rounded-xl border border-blue-200 dark:border-blue-700/50">
+                    <span className="text-gray-700 dark:text-gray-300">Admin Users</span>
+                    <span className="text-blue-600 dark:text-blue-400 font-semibold">{adminUsers.length} Active</span>
+                  </div>
+                  
+                  <div className="flex items-center justify-between p-4 bg-blue-50 dark:bg-blue-900/20 rounded-xl border border-blue-200 dark:border-blue-700/50">
+                    <span className="text-gray-700 dark:text-gray-300">Editor Mode</span>
+                    <span className="text-blue-600 dark:text-blue-400 font-semibold">Available</span>
+                  </div>
+                  
+                  <div className="flex items-center justify-between p-4 bg-blue-50 dark:bg-blue-900/20 rounded-xl border border-blue-200 dark:border-blue-700/50">
+                    <span className="text-gray-700 dark:text-gray-300">Notifications</span>
+                    <span className="text-blue-600 dark:text-blue-400 font-semibold">Enabled</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Quick Actions */}
+            <div className="bg-white dark:bg-red-950/50 backdrop-blur-sm rounded-2xl border border-gray-200 dark:border-red-800/30 p-6">
+              <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-6 flex items-center">
+                <Settings className="h-6 w-6 mr-3 text-gray-600 dark:text-gray-400" />
+                Quick Actions
+              </h3>
+              
+              <div className="grid md:grid-cols-3 gap-4">
+                <button className="p-4 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white rounded-xl font-semibold transition-all duration-200 transform hover:scale-105">
+                  Export Student Data
+                </button>
+                
+                <button className="p-4 bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white rounded-xl font-semibold transition-all duration-200 transform hover:scale-105">
+                  Backup System Data
+                </button>
+                
+                <button className="p-4 bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white rounded-xl font-semibold transition-all duration-200 transform hover:scale-105">
+                  Generate Reports
+                </button>
+              </div>
+            </div>
+          </div>
+        ) : (
+          /* User Management */
+          <div className="grid lg:grid-cols-2 gap-8">
           {/* Add New Admin */}
           <div className="bg-white dark:bg-red-950/50 backdrop-blur-sm rounded-2xl border border-gray-200 dark:border-red-800/30 p-6">
             <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6 flex items-center">
@@ -209,6 +358,7 @@ const AdminBlock: React.FC = () => {
             )}
           </div>
         </div>
+        )}
 
         {/* Admin Management Tips */}
         <div className="mt-8 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-700/50 rounded-xl p-6">
@@ -224,15 +374,8 @@ const AdminBlock: React.FC = () => {
           </ul>
         </div>
       </div>
-      
-      {/* Footer */}
-      <footer className="mt-16 py-8 border-t border-gray-200 dark:border-red-800/30">
-        <div className="max-w-4xl mx-auto px-4 text-center">
-          <div className="text-center text-gray-400 dark:text-gray-500 text-sm opacity-70">
-            Guided by Sunil Rathod (TGT CS)
-          </div>
-        </div>
-      </footer>
+
+      <Footer />
     </div>
   );
 };

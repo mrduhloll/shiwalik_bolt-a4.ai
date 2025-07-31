@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Mountain, TreePine, Home as HomeIcon, Sun } from 'lucide-react';
+import Footer from '../components/ui/Footer';
 
 const Houses: React.FC = () => {
   const houses = [
@@ -165,15 +166,8 @@ const Houses: React.FC = () => {
           </div>
         </div>
       </div>
-      
-      {/* Footer */}
-      <footer className="mt-16 py-8 border-t border-gray-200 dark:border-gray-700">
-        <div className="max-w-6xl mx-auto px-4 text-center">
-          <div className="text-center text-gray-400 dark:text-gray-500 text-sm opacity-70">
-            Guided by Sunil Rathod (TGT CS)
-          </div>
-        </div>
-      </footer>
+
+      <Footer />
     </div>
   );
 };

@@ -198,14 +198,6 @@ const LoginModal: React.FC = () => {
             </button>
           </form>
 
-          {/* Admin Credentials Info */}
-          <div className="mt-6 p-4 bg-gray-50 dark:bg-red-900/20 rounded-xl border border-gray-200 dark:border-red-700/30">
-            <h4 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Admin Credentials:</h4>
-            <div className="space-y-1 text-xs text-gray-600 dark:text-gray-400">
-              <div>Username: <code className="bg-gray-200 dark:bg-red-800/50 px-1 rounded">roti</code> | Password: <code className="bg-gray-200 dark:bg-red-800/50 px-1 rounded">curry</code></div>
-              <div>Username: <code className="bg-gray-200 dark:bg-red-800/50 px-1 rounded">abhi</code> | Password: <code className="bg-gray-200 dark:bg-red-800/50 px-1 rounded">gobi</code></div>
-            </div>
-          </div>
         </div>
       </div>
     </div>

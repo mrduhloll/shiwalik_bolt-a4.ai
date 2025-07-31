@@ -3,6 +3,7 @@ import { TrendingUp, Award, Users, BookOpen } from 'lucide-react';
 import { useStudents } from '../contexts/StudentContext';
 import { useAuth } from '../contexts/AuthContext';
 import EditableContent from '../components/ui/EditableContent';
+import Footer from '../components/ui/Footer';
 
 const AcademicPerformance: React.FC = () => {
   const { isEditorMode } = useAuth();
@@ -270,15 +271,8 @@ const AcademicPerformance: React.FC = () => {
           </div>
         </div>
       </div>
-      
-      {/* Footer */}
-      <footer className="mt-16 py-8 border-t border-white/10">
-        <div className="max-w-7xl mx-auto px-4 text-center">
-          <div className="text-center text-gray-400 text-sm opacity-70">
-            Guided by Sunil Rathod (TGT CS)
-          </div>
-        </div>
-      </footer>
+
+      <Footer />
     </div>
   );
 };

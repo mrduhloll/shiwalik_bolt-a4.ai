@@ -20,10 +20,12 @@ interface LeaveRequest {
 interface NotificationContextType {
   leaveRequests: LeaveRequest[];
   pendingCount: number;
+  userNotifications: string[];
   addLeaveRequest: (request: Omit<LeaveRequest, 'id' | 'submittedAt'>) => void;
   updateRequestStatus: (id: string, status: 'approved' | 'rejected') => void;
   notifications: string[];
   addNotification: (message: string) => void;
+  addUserNotification: (message: string) => void;
   clearNotifications: () => void;
 }
 
@@ -58,6 +60,13 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
   ]);
   
   const [notifications, setNotifications] = useState<string[]>([]);
+  const [userNotifications, setUserNotifications] = useState<string[]>([
+    'New academic results published for Mid-Term 2024',
+    'Inter-house sports competition results announced',
+    'Science fair winners declared - Congratulations!',
+    'Annual day preparations have begun',
+    'Library hours extended during exam period'
+  ]);
 
   const pendingCount = leaveRequests.filter(req => req.status === 'pending').length;
 
@@ -83,6 +92,10 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
     setNotifications(prev => [...prev, message]);
   };
 
+  const addUserNotification = (message: string) => {
+    setUserNotifications(prev => [...prev, message]);
+  };
+
   const clearNotifications = () => {
     setNotifications([]);
   };
@@ -92,10 +105,12 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
       value={{
         leaveRequests,
         pendingCount,
+        userNotifications,
         addLeaveRequest,
         updateRequestStatus,
         notifications,
         addNotification,
+        addUserNotification,
         clearNotifications,
       }}
     >

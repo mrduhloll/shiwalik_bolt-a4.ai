@@ -4,6 +4,7 @@ import { useStudents } from '../contexts/StudentContext';
 import { useAuth } from '../contexts/AuthContext';
 import StudentCard from '../components/student/StudentCard';
 import AddStudentModal from '../components/student/AddStudentModal';
+import Footer from '../components/ui/Footer';
 
 const StudentDetails: React.FC = () => {
   const { students, searchQuery, setSearchQuery, classFilter, setClassFilter } = useStudents();
@@ -177,15 +178,8 @@ const StudentDetails: React.FC = () => {
         isOpen={isAddModalOpen}
         onClose={() => setIsAddModalOpen(false)}
       />
-      
-      {/* Footer */}
-      <footer className="mt-16 py-8 border-t border-gray-200 dark:border-red-800/30">
-        <div className="max-w-7xl mx-auto px-4 text-center">
-          <div className="text-center text-gray-400 dark:text-gray-500 text-sm opacity-70">
-            Guided by Sunil Rathod (TGT CS)
-          </div>
-        </div>
-      </footer>
+
+      <Footer />
     </div>
   );
 };

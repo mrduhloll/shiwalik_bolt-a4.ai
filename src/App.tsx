@@ -5,6 +5,7 @@ import { AuthProvider } from './contexts/AuthContext';
 import { StudentProvider } from './contexts/StudentContext';
 import { NotificationProvider } from './contexts/NotificationContext';
 import { LoadingProvider } from './contexts/LoadingContext';
+import { DataProvider } from './contexts/DataContext';
 import MainLayout from './components/MainLayout';
 import Layout from './components/Layout';
 import MainHome from './pages/MainHome';
@@ -107,19 +108,21 @@ const AppContent: React.FC = () => {
 function App() {
   return (
     <ThemeProvider>
-      <NotificationProvider>
-        <AuthProvider>
-          <StudentProvider>
-            <LoadingProvider>
-              <Router>
-                <div className="min-h-screen transition-all duration-300">
-                  <AppContent />
-                </div>
-              </Router>
-            </LoadingProvider>
-          </StudentProvider>
-        </AuthProvider>
-      </NotificationProvider>
+      <DataProvider>
+        <NotificationProvider>
+          <AuthProvider>
+            <StudentProvider>
+              <LoadingProvider>
+                <Router>
+                  <div className="min-h-screen transition-all duration-300">
+                    <AppContent />
+                  </div>
+                </Router>
+              </LoadingProvider>
+            </StudentProvider>
+          </AuthProvider>
+        </NotificationProvider>
+      </DataProvider>
     </ThemeProvider>
   );
 }

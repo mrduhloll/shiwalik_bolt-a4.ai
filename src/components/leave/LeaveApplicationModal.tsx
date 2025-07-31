@@ -94,7 +94,8 @@ const LeaveApplicationModal: React.FC<LeaveApplicationModalProps> = ({ isOpen, o
         parentType: formData.parentType,
         parentName: formData.parentName,
         house: formData.house,
-        photoUrl: photoPreview // In real app, this would be uploaded to server
+        photoUrl: photoPreview,
+        submittedAt: new Date().toISOString()
       };
 
       addLeaveRequest(leaveRequest);
@@ -355,7 +356,7 @@ const LeaveApplicationModal: React.FC<LeaveApplicationModalProps> = ({ isOpen, o
                       <img
                         src={photoPreview}
                         alt="Preview"
-                        className="max-w-full max-h-48 mx-auto rounded-lg object-cover"
+                        className="max-w-full max-h-48 mx-auto rounded-lg object-cover border-2 border-blue-500/30"
                       />
                       <p className="text-sm text-gray-600 dark:text-gray-400">
                         Click to change photo

@@ -3,12 +3,16 @@ import { ChevronDown, Sparkles, Users, Award, TrendingUp } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { useStudents } from '../contexts/StudentContext';
+import { useData } from '../contexts/DataContext';
 import EditableContent from '../components/ui/EditableContent';
+import Footer from '../components/ui/Footer';
 
 const Home: React.FC = () => {
   const { isEditorMode } = useAuth();
+  const { students } = useStudents();
+  const { saveData, loadData } = useData();
   const [isVisible, setIsVisible] = useState(false);
-  const [homeContent, setHomeContent] = useState({
+  const [homeContent, setHomeContent] = useState(() => loadData('homeContent', {
     title: 'Welcome to',
     subtitle: 'Shiwalik House',
     description: 'Excellence in Education, Character, and Leadership',
@@ -16,11 +20,15 @@ const Home: React.FC = () => {
     sectionDescription: 'Discover the achievements and excellence that define Shiwalik House',
     featuresTitle: 'What We Offer',
     featuresDescription: 'Comprehensive management and tracking for all aspects of student life'
-  });
+  }));
 
   useEffect(() => {
     setIsVisible(true);
   }, []);
+
+  useEffect(() => {
+    saveData('homeContent', homeContent);
+  }, [homeContent, saveData]);
 
   const scrollToContent = () => {
     window.scrollTo({
@@ -29,10 +37,18 @@ const Home: React.FC = () => {
     });
   };
 
+  // Calculate real-time stats from actual data
+  const totalStudents = students.length;
+  const totalAchievements = students.reduce((sum, student) => sum + student.achievements.length, 0);
+  const studentsWithRecords = students.filter(s => s.academicRecords.length > 0);
+  const averagePercentage = studentsWithRecords.length > 0 
+    ? Math.round(studentsWithRecords.reduce((sum, student) => sum + student.academicRecords[0].percentage, 0) / studentsWithRecords.length)
+    : 0;
+
   const stats = [
-    { icon: Users, label: 'Total Students', value: '156', color: 'from-blue-500 to-blue-600' },
-    { icon: Award, label: 'Achievements', value: '47', color: 'from-purple-500 to-purple-600' },
-    { icon: TrendingUp, label: 'Academic Excellence', value: '94%', color: 'from-pink-500 to-pink-600' },
+    { icon: Users, label: 'Total Students', value: totalStudents.toString(), color: 'from-blue-500 to-blue-600' },
+    { icon: Award, label: 'Achievements', value: totalAchievements.toString(), color: 'from-purple-500 to-purple-600' },
+    { icon: TrendingUp, label: 'Academic Excellence', value: `${averagePercentage}%`, color: 'from-pink-500 to-pink-600' },
     { icon: Sparkles, label: 'House Ranking', value: '#1', color: 'from-orange-500 to-orange-600' },
   ];
 
@@ -179,6 +195,8 @@ const Home: React.FC = () => {
           </div>
         </div>
       </section>
+      
+      <Footer />
     </div>
   );
 };

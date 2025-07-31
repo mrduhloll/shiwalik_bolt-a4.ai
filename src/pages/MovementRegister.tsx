@@ -3,6 +3,7 @@ import { Clock, CheckCircle, XCircle, Calendar, User, Phone, FileText, Plus } fr
 import { useNotifications } from '../contexts/NotificationContext';
 import { useAuth } from '../contexts/AuthContext';
 import LeaveApplicationModal from '../components/leave/LeaveApplicationModal';
+import Footer from '../components/ui/Footer';
 
 const MovementRegister: React.FC = () => {
   const { leaveRequests, updateRequestStatus } = useNotifications();
@@ -267,15 +268,8 @@ const MovementRegister: React.FC = () => {
           onClose={() => setIsApplicationModalOpen(false)}
         />
       </div>
-      
-      {/* Footer */}
-      <footer className="mt-16 py-8 border-t border-white/10">
-        <div className="max-w-6xl mx-auto px-4 text-center">
-          <div className="text-center text-gray-400 text-sm opacity-70">
-            Guided by Sunil Rathod (TGT CS)
-          </div>
-        </div>
-      </footer>
+
+      <Footer />
     </div>
   );
 };

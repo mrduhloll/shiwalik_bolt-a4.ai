@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import EditableImage from '../components/ui/EditableImage';
+import Footer from '../components/ui/Footer';
 import { Camera, Award, Users, BookOpen, Palette, Music } from 'lucide-react';
 
 const Gallery: React.FC = () => {
@@ -197,15 +198,8 @@ const Gallery: React.FC = () => {
           </div>
         </div>
       </div>
-      
-      {/* Footer */}
-      <footer className="mt-16 py-8 border-t border-gray-200 dark:border-gray-700">
-        <div className="max-w-7xl mx-auto px-4 text-center">
-          <div className="text-center text-gray-400 dark:text-gray-500 text-sm opacity-70">
-            Guided by Sunil Rathod (TGT CS)
-          </div>
-        </div>
-      </footer>
+
+      <Footer />
     </div>
   );
 };
