@@ -22,7 +22,7 @@ const Footer: React.FC = () => {
               <p className="text-xs text-white">12th Computer Science</p>
             </div>
             <div className="text-gray-600 dark:text-gray-300">
-              <p className="text-white font-bold text-lg">Frontend Development</p>
+              <p className="text-white font-bold text-lg">Data Entry</p>
               <p className="text-sm md:text-base text-white">IT Department</p>
             </div>
           </div>
