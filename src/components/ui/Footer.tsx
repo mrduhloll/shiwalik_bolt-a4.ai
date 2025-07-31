@@ -21,10 +21,6 @@ const Footer: React.FC = () => {
               <p className="text-white font-bold text-lg">Data Entry</p>
               <p className="text-sm md:text-base text-white">IT Department</p>
             </div>
-            <div className="text-gray-600 dark:text-gray-300">
-              <p className="text-white font-bold text-lg">Coordinator</p>
-              <p className="text-sm md:text-base text-white">Sheaker</p>
-            </div>
           </div>
         </div>
         <div className="text-center text-gray-400 dark:text-gray-500 text-sm opacity-70">
