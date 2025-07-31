@@ -7,7 +7,6 @@ const Footer: React.FC = () => {
         <div className="text-center mb-6">
           <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4">Development Team</h3>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-            <div className="text-gray-600 dark:text-gray-300">
               <p className="text-white font-bold text-lg">Frontend Development</p>
               <p className="text-sm md:text-base text-white">Abhishek A</p>
               <p className="text-xs text-white">12th Computer Science</p>
