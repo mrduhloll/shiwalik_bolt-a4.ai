@@ -9,7 +9,8 @@ const Footer: React.FC = () => {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
             <div className="text-gray-600 dark:text-gray-300">
               <p className="font-semibold">Frontend Development</p>
-              <p className="text-sm">Student Team</p>
+              <p className="text-sm">Abhishek A</p>
+              <p className="text-sm">12th Computer Science</p>
             </div>
             <div className="text-gray-600 dark:text-gray-300">
               <p className="font-semibold">UI/UX Design</p>
