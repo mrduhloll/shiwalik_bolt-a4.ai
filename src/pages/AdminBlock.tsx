@@ -3,18 +3,20 @@ import { Shield, UserPlus, Trash2, Eye, EyeOff, AlertTriangle, BarChart3, Users,
 import { useAuth } from '../contexts/AuthContext';
 import { useNotifications } from '../contexts/NotificationContext';
 import { useStudents } from '../contexts/StudentContext';
+import { useAdminControl } from '../contexts/AdminControlContext';
 import Footer from '../components/ui/Footer';
 
 const AdminBlock: React.FC = () => {
   const { adminUsers, addAdminUser, removeAdminUser, user } = useAuth();
   const { addNotification } = useNotifications();
   const { students } = useStudents();
+  const { sectionVisibility, toggleSection, exportStudentData, backupSystemData } = useAdminControl();
   
   const [newUsername, setNewUsername] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [activeTab, setActiveTab] = useState<'dashboard' | 'users'>('dashboard');
+  const [activeTab, setActiveTab] = useState<'dashboard' | 'users' | 'controls'>('dashboard');
 
   const handleAddAdmin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -117,6 +119,17 @@ const AdminBlock: React.FC = () => {
           >
             <BarChart3 className="h-4 w-4 mr-2 inline" />
             Dashboard
+          </button>
+          <button
+            onClick={() => setActiveTab('controls')}
+            className={`px-6 py-3 rounded-lg font-semibold transition-all duration-200 ${
+              activeTab === 'controls'
+                ? 'bg-white text-gray-900'
+                : 'text-gray-300 hover:text-white hover:bg-white/10'
+            }`}
+          >
+            <Settings className="h-4 w-4 mr-2 inline" />
+            Site Controls
           </button>
           <button
             onClick={() => setActiveTab('users')}
@@ -225,17 +238,99 @@ const AdminBlock: React.FC = () => {
               </h3>
               
               <div className="grid md:grid-cols-3 gap-4">
-                <button className="p-4 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white rounded-xl font-semibold transition-all duration-200 transform hover:scale-105">
+                <button 
+                  onClick={exportStudentData}
+                  className="p-4 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white rounded-xl font-semibold transition-all duration-200 transform hover:scale-105"
+                >
                   Export Student Data
                 </button>
                 
-                <button className="p-4 bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white rounded-xl font-semibold transition-all duration-200 transform hover:scale-105">
+                <button 
+                  onClick={backupSystemData}
+                  className="p-4 bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white rounded-xl font-semibold transition-all duration-200 transform hover:scale-105"
+                >
                   Backup System Data
                 </button>
                 
                 <button className="p-4 bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white rounded-xl font-semibold transition-all duration-200 transform hover:scale-105">
                   Generate Reports
                 </button>
+              </div>
+            </div>
+          </div>
+        ) : activeTab === 'controls' ? (
+          /* Site Controls */
+          <div className="space-y-8">
+            <div className="bg-white dark:bg-red-950/50 backdrop-blur-sm rounded-2xl border border-gray-200 dark:border-red-800/30 p-6">
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6 flex items-center">
+                <Settings className="h-6 w-6 mr-3 text-red-600" />
+                Section Visibility Controls
+              </h2>
+              <p className="text-gray-600 dark:text-gray-400 mb-6">
+                Toggle sections on/off to control what visitors can see on the website.
+              </p>
+              
+              <div className="grid md:grid-cols-2 gap-6">
+                {Object.entries(sectionVisibility).map(([section, isVisible]) => (
+                  <div key={section} className="flex items-center justify-between p-4 bg-gray-50 dark:bg-red-900/20 rounded-xl border border-gray-200 dark:border-red-700/30">
+                    <div>
+                      <h4 className="font-semibold text-gray-900 dark:text-white capitalize">
+                        {section === 'about' ? 'About House' : section} Section
+                      </h4>
+                      <p className="text-sm text-gray-500 dark:text-gray-400">
+                        {isVisible ? 'Currently visible to users' : 'Hidden from users'}
+                      </p>
+                    </div>
+                    <button
+                      onClick={() => toggleSection(section)}
+                      className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 ${
+                        isVisible ? 'bg-red-600' : 'bg-gray-200 dark:bg-gray-700'
+                      }`}
+                    >
+                      <span
+                        className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                          isVisible ? 'translate-x-6' : 'translate-x-1'
+                        }`}
+                      />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </div>
+            
+            {/* Export & Backup Controls */}
+            <div className="bg-white dark:bg-red-950/50 backdrop-blur-sm rounded-2xl border border-gray-200 dark:border-red-800/30 p-6">
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6 flex items-center">
+                <Database className="h-6 w-6 mr-3 text-red-600" />
+                Data Management
+              </h2>
+              
+              <div className="grid md:grid-cols-2 gap-6">
+                <div className="p-6 bg-blue-50 dark:bg-blue-900/20 rounded-xl border border-blue-200 dark:border-blue-700/50">
+                  <h3 className="text-lg font-bold text-blue-900 dark:text-blue-300 mb-3">Export Student Data</h3>
+                  <p className="text-blue-700 dark:text-blue-400 text-sm mb-4">
+                    Download all student information in CSV format for external use or backup.
+                  </p>
+                  <button
+                    onClick={exportStudentData}
+                    className="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold py-3 px-4 rounded-xl transition-all duration-200 transform hover:scale-105"
+                  >
+                    Download CSV File
+                  </button>
+                </div>
+                
+                <div className="p-6 bg-green-50 dark:bg-green-900/20 rounded-xl border border-green-200 dark:border-green-700/50">
+                  <h3 className="text-lg font-bold text-green-900 dark:text-green-300 mb-3">Backup System Data</h3>
+                  <p className="text-green-700 dark:text-green-400 text-sm mb-4">
+                    Create a complete backup of all website data and settings.
+                  </p>
+                  <button
+                    onClick={backupSystemData}
+                    className="w-full bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white font-semibold py-3 px-4 rounded-xl transition-all duration-200 transform hover:scale-105"
+                  >
+                    Create Backup
+                  </button>
+                </div>
               </div>
             </div>
           </div>

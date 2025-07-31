@@ -350,13 +350,18 @@ const StudentProfile: React.FC = () => {
                             newRecords[index].subjects[subIndex].marks = parseInt(value);
                             // Recalculate grade based on marks
                             const marks = parseInt(value);
-                            let grade = 'F';
-                            if (marks >= 90) grade = 'A+';
-                            else if (marks >= 80) grade = 'A';
-                            else if (marks >= 70) grade = 'B+';
-                            else if (marks >= 60) grade = 'B';
-                            else if (marks >= 50) grade = 'C';
-                            else if (marks >= 40) grade = 'D';
+                            const calculateGrade = (marks: number): string => {
+                              if (marks >= 91) return 'A1';
+                              if (marks >= 81) return 'A2';
+                              if (marks >= 71) return 'B1';
+                              if (marks >= 61) return 'B2';
+                              if (marks >= 51) return 'C1';
+                              if (marks >= 41) return 'C2';
+                              if (marks >= 33) return 'D';
+                              return 'E';
+                            };
+                            
+                            const grade = calculateGrade(marks);
                             newRecords[index].subjects[subIndex].grade = grade;
                             
                             // Recalculate percentage
@@ -365,13 +370,7 @@ const StudentProfile: React.FC = () => {
                             newRecords[index].percentage = Math.round(percentage * 10) / 10;
                             
                             // Recalculate overall grade
-                            if (percentage >= 90) newRecords[index].grade = 'A+';
-                            else if (percentage >= 80) newRecords[index].grade = 'A';
-                            else if (percentage >= 70) newRecords[index].grade = 'B+';
-                            else if (percentage >= 60) newRecords[index].grade = 'B';
-                            else if (percentage >= 50) newRecords[index].grade = 'C';
-                            else if (percentage >= 40) newRecords[index].grade = 'D';
-                            else newRecords[index].grade = 'F';
+                            newRecords[index].grade = calculateGrade(percentage);
                             
                             updateStudent(student.id, { academicRecords: newRecords });
                           }}
