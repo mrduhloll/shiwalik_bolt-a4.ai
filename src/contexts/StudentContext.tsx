@@ -58,24 +58,41 @@ interface StudentContextType {
 const StudentContext = createContext<StudentContextType | undefined>(undefined);
 
 export const StudentProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [students, setStudents] = useState<Student[]>(sampleStudents);
+  const [students, setStudents] = useState<Student[]>(() => {
+    // Load from localStorage if available, otherwise use sample data
+    const saved = localStorage.getItem('shiwalik_students');
+    return saved ? JSON.parse(saved) : sampleStudents;
+  });
   const [searchQuery, setSearchQuery] = useState('');
   const [classFilter, setClassFilter] = useState('');
 
   const updateStudent = (id: string, updates: Partial<Student>) => {
-    setStudents(prev => 
-      prev.map(student => 
+    setStudents(prev => {
+      const updatedStudents = prev.map(student => 
         student.id === id ? { ...student, ...updates } : student
-      )
-    );
+      );
+      // Save to localStorage for persistence
+      localStorage.setItem('shiwalik_students', JSON.stringify(updatedStudents));
+      return updatedStudents;
+    });
   };
 
   const addStudent = (student: Student) => {
-    setStudents(prev => [...prev, student]);
+    setStudents(prev => {
+      const updatedStudents = [...prev, student];
+      // Save to localStorage for persistence
+      localStorage.setItem('shiwalik_students', JSON.stringify(updatedStudents));
+      return updatedStudents;
+    });
   };
 
   const deleteStudent = (id: string) => {
-    setStudents(prev => prev.filter(student => student.id !== id));
+    setStudents(prev => {
+      const updatedStudents = prev.filter(student => student.id !== id);
+      // Save to localStorage for persistence
+      localStorage.setItem('shiwalik_students', JSON.stringify(updatedStudents));
+      return updatedStudents;
+    });
   };
 
   return (

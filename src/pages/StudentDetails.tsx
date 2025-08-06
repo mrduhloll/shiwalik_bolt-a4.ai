@@ -2,15 +2,19 @@ import React, { useState, useMemo } from 'react';
 import { Search, Filter, Plus, Upload, Download, UserPlus } from 'lucide-react';
 import { useStudents } from '../contexts/StudentContext';
 import { useAuth } from '../contexts/AuthContext';
+import { useNotifications } from '../contexts/NotificationContext';
 import StudentCard from '../components/student/StudentCard';
 import AddStudentModal from '../components/student/AddStudentModal';
 import Footer from '../components/ui/Footer';
+import * as XLSX from 'xlsx';
 
 const StudentDetails: React.FC = () => {
-  const { students, searchQuery, setSearchQuery, classFilter, setClassFilter } = useStudents();
+  const { students, searchQuery, setSearchQuery, classFilter, setClassFilter, addStudent } = useStudents();
   const { isAuthenticated, isEditorMode } = useAuth();
+  const { addNotification } = useNotifications();
   const [sortBy, setSortBy] = useState<'name' | 'class' | 'performance'>('name');
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [isImporting, setIsImporting] = useState(false);
 
   const classes = Array.from(new Set(students.map(s => s.class))).sort((a, b) => a - b);
 
@@ -45,14 +49,225 @@ const StudentDetails: React.FC = () => {
     return filtered;
   }, [students, searchQuery, classFilter, sortBy]);
 
-  const handleExcelImport = () => {
-    // TODO: Implement Excel import functionality
-    console.log('Excel import functionality to be implemented');
+  const handleExcelExport = () => {
+    try {
+      // Prepare data for Excel export
+      const exportData = students.map(student => ({
+        'Student Name': student.name,
+        'Class': student.class,
+        'Section': student.section,
+        'Roll Number': student.rollNumber,
+        'Date of Birth': student.dateOfBirth,
+        'Blood Group': student.bloodGroup,
+        'House': student.house,
+        'Address': student.address,
+        'Identification Mark': student.identificationMark,
+        'Hobbies': student.hobbies.join(', '),
+        'Achievements': student.achievements.join(', '),
+        'Photo URL': student.photo,
+        'Father Name': student.parentDetails.father.name,
+        'Father Occupation': student.parentDetails.father.occupation,
+        'Father Contact': student.parentDetails.father.contact,
+        'Father Email': student.parentDetails.father.email,
+        'Father Photo URL': student.parentDetails.father.photo,
+        'Mother Name': student.parentDetails.mother.name,
+        'Mother Occupation': student.parentDetails.mother.occupation,
+        'Mother Contact': student.parentDetails.mother.contact,
+        'Mother Email': student.parentDetails.mother.email,
+        'Mother Photo URL': student.parentDetails.mother.photo,
+        'Emergency Contact': student.parentDetails.emergencyContact,
+        'Latest Semester': student.academicRecords[0]?.semester || '',
+        'Latest Percentage': student.academicRecords[0]?.percentage || '',
+        'Latest Grade': student.academicRecords[0]?.grade || '',
+        'Mathematics Marks': student.academicRecords[0]?.subjects.find(s => s.name === 'Mathematics')?.marks || '',
+        'Science Marks': student.academicRecords[0]?.subjects.find(s => s.name === 'Science')?.marks || '',
+        'English Marks': student.academicRecords[0]?.subjects.find(s => s.name === 'English')?.marks || '',
+        'Hindi Marks': student.academicRecords[0]?.subjects.find(s => s.name === 'Hindi')?.marks || '',
+        'Social Studies Marks': student.academicRecords[0]?.subjects.find(s => s.name === 'Social Studies')?.marks || '',
+        'Computer Science Marks': student.academicRecords[0]?.subjects.find(s => s.name === 'Computer Science')?.marks || '',
+        'Physics Marks': student.academicRecords[0]?.subjects.find(s => s.name === 'Physics')?.marks || '',
+        'Chemistry Marks': student.academicRecords[0]?.subjects.find(s => s.name === 'Chemistry')?.marks || '',
+        'Biology Marks': student.academicRecords[0]?.subjects.find(s => s.name === 'Biology')?.marks || ''
+      }));
+
+      // Create workbook and worksheet
+      const wb = XLSX.utils.book_new();
+      const ws = XLSX.utils.json_to_sheet(exportData);
+
+      // Set column widths
+      const colWidths = [
+        { wch: 20 }, // Student Name
+        { wch: 8 },  // Class
+        { wch: 8 },  // Section
+        { wch: 12 }, // Roll Number
+        { wch: 12 }, // Date of Birth
+        { wch: 12 }, // Blood Group
+        { wch: 10 }, // House
+        { wch: 30 }, // Address
+        { wch: 20 }, // Identification Mark
+        { wch: 25 }, // Hobbies
+        { wch: 30 }, // Achievements
+        { wch: 40 }, // Photo URL
+        { wch: 20 }, // Father Name
+        { wch: 15 }, // Father Occupation
+        { wch: 15 }, // Father Contact
+        { wch: 25 }, // Father Email
+        { wch: 40 }, // Father Photo URL
+        { wch: 20 }, // Mother Name
+        { wch: 15 }, // Mother Occupation
+        { wch: 15 }, // Mother Contact
+        { wch: 25 }, // Mother Email
+        { wch: 40 }, // Mother Photo URL
+        { wch: 15 }, // Emergency Contact
+        { wch: 15 }, // Latest Semester
+        { wch: 12 }, // Latest Percentage
+        { wch: 10 }, // Latest Grade
+        { wch: 12 }, // Mathematics Marks
+        { wch: 12 }, // Science Marks
+        { wch: 12 }, // English Marks
+        { wch: 12 }, // Hindi Marks
+        { wch: 15 }, // Social Studies Marks
+        { wch: 15 }, // Computer Science Marks
+        { wch: 12 }, // Physics Marks
+        { wch: 12 }, // Chemistry Marks
+        { wch: 12 }  // Biology Marks
+      ];
+      ws['!cols'] = colWidths;
+
+      // Add worksheet to workbook
+      XLSX.utils.book_append_sheet(wb, ws, 'Students');
+
+      // Generate filename with current date
+      const date = new Date().toISOString().split('T')[0];
+      const filename = `shiwalik_students_${date}.xlsx`;
+
+      // Save file
+      XLSX.writeFile(wb, filename);
+      addNotification(`Student data exported successfully as ${filename}`);
+    } catch (error) {
+      console.error('Export error:', error);
+      addNotification('Error exporting student data. Please try again.');
+    }
   };
 
-  const handleExcelExport = () => {
-    // TODO: Implement Excel export functionality
-    console.log('Excel export functionality to be implemented');
+  const handleExcelImport = () => {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = '.xlsx,.xls';
+    input.onchange = async (e) => {
+      const file = (e.target as HTMLInputElement).files?.[0];
+      if (!file) return;
+
+      setIsImporting(true);
+      try {
+        const data = await file.arrayBuffer();
+        const workbook = XLSX.read(data);
+        const worksheet = workbook.Sheets[workbook.SheetNames[0]];
+        const jsonData = XLSX.utils.sheet_to_json(worksheet);
+
+        let importedCount = 0;
+        let errorCount = 0;
+
+        for (const row of jsonData as any[]) {
+          try {
+            // Calculate grade based on marks
+            const calculateGrade = (marks: number): string => {
+              if (marks >= 91) return 'A1';
+              if (marks >= 81) return 'A2';
+              if (marks >= 71) return 'B1';
+              if (marks >= 61) return 'B2';
+              if (marks >= 51) return 'C1';
+              if (marks >= 41) return 'C2';
+              if (marks >= 33) return 'D';
+              return 'E';
+            };
+
+            // Prepare subjects array
+            const subjects = [];
+            const subjectNames = ['Mathematics', 'Science', 'English', 'Hindi', 'Social Studies', 'Computer Science', 'Physics', 'Chemistry', 'Biology'];
+            
+            for (const subjectName of subjectNames) {
+              const marks = row[`${subjectName} Marks`];
+              if (marks && !isNaN(Number(marks))) {
+                subjects.push({
+                  name: subjectName,
+                  marks: Number(marks),
+                  grade: calculateGrade(Number(marks))
+                });
+              }
+            }
+
+            // Calculate overall percentage and grade
+            const totalMarks = subjects.reduce((sum, subject) => sum + subject.marks, 0);
+            const percentage = subjects.length > 0 ? Math.round((totalMarks / subjects.length) * 10) / 10 : 0;
+            const overallGrade = calculateGrade(percentage);
+
+            const newStudent = {
+              id: Date.now().toString() + Math.random().toString(36).substr(2, 9),
+              name: row['Student Name'] || '',
+              class: Number(row['Class']) || 6,
+              section: row['Section'] || 'A',
+              rollNumber: row['Roll Number'] || '',
+              dateOfBirth: row['Date of Birth'] || '',
+              bloodGroup: row['Blood Group'] || 'A+',
+              house: row['House'] || 'Shiwalik',
+              address: row['Address'] || '',
+              identificationMark: row['Identification Mark'] || '',
+              hobbies: row['Hobbies'] ? row['Hobbies'].split(',').map((h: string) => h.trim()).filter((h: string) => h) : [],
+              achievements: row['Achievements'] ? row['Achievements'].split(',').map((a: string) => a.trim()).filter((a: string) => a) : [],
+              photo: row['Photo URL'] || 'https://images.pexels.com/photos/1139743/pexels-photo-1139743.jpeg?auto=compress&cs=tinysrgb&w=300',
+              parentDetails: {
+                father: {
+                  name: row['Father Name'] || '',
+                  occupation: row['Father Occupation'] || '',
+                  contact: row['Father Contact'] || '',
+                  email: row['Father Email'] || '',
+                  photo: row['Father Photo URL'] || 'https://images.pexels.com/photos/1468379/pexels-photo-1468379.jpeg?auto=compress&cs=tinysrgb&w=300'
+                },
+                mother: {
+                  name: row['Mother Name'] || '',
+                  occupation: row['Mother Occupation'] || '',
+                  contact: row['Mother Contact'] || '',
+                  email: row['Mother Email'] || '',
+                  photo: row['Mother Photo URL'] || 'https://images.pexels.com/photos/1181690/pexels-photo-1181690.jpeg?auto=compress&cs=tinysrgb&w=300'
+                },
+                emergencyContact: row['Emergency Contact'] || ''
+              },
+              academicRecords: subjects.length > 0 ? [{
+                semester: row['Latest Semester'] || 'Mid-Term 2024',
+                subjects: subjects,
+                percentage: percentage,
+                grade: overallGrade
+              }] : []
+            };
+
+            // Validate required fields
+            if (newStudent.name && newStudent.rollNumber) {
+              addStudent(newStudent);
+              importedCount++;
+            } else {
+              errorCount++;
+            }
+          } catch (error) {
+            console.error('Error processing row:', error);
+            errorCount++;
+          }
+        }
+
+        if (importedCount > 0) {
+          addNotification(`Successfully imported ${importedCount} students!`);
+        }
+        if (errorCount > 0) {
+          addNotification(`${errorCount} rows had errors and were skipped.`);
+        }
+      } catch (error) {
+        console.error('Import error:', error);
+        addNotification('Error importing Excel file. Please check the format and try again.');
+      } finally {
+        setIsImporting(false);
+      }
+    };
+    input.click();
   };
 
   return (
@@ -96,10 +311,20 @@ const StudentDetails: React.FC = () => {
                 </button>
                 <button
                   onClick={handleExcelImport}
-                  className="flex items-center px-4 py-2 bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white rounded-xl font-semibold transition-all duration-200 transform hover:scale-105"
+                  disabled={isImporting}
+                  className="flex items-center px-4 py-2 bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 disabled:from-gray-400 disabled:to-gray-500 text-white rounded-xl font-semibold transition-all duration-200 transform hover:scale-105 disabled:scale-100 disabled:cursor-not-allowed"
                 >
-                  <Upload className="h-4 w-4 mr-2" />
-                  Import Excel
+                  {isImporting ? (
+                    <>
+                      <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent mr-2"></div>
+                      Importing...
+                    </>
+                  ) : (
+                    <>
+                      <Upload className="h-4 w-4 mr-2" />
+                      Import Excel
+                    </>
+                  )}
                 </button>
                 <button
                   onClick={handleExcelExport}
